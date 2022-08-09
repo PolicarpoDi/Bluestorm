@@ -1,59 +1,44 @@
-from database import database, session
 from typing import List
-from fastapi import FastAPI
-
-from model import PATIENTS, PHARMACIES, TRANSACTIONS
-from schema import Patients, Pharmacies, Transactions
-
-
-app = FastAPI()
-
-
-# Informa quando conectar no banco
-@app.on_event("startup")
-async def startup():
-    await database.connect()
+from sqlalchemy.orm import Session
+from fastapi import Depends, FastAPI
+from database import SessionLocal
+from models import PatientsModel, PharmaciesModel, TransactionsModel
+from crud import get_patient, get_pharmacies, get_transactions
+from fastapi.responses import JSONResponse
 
 
-# Informa quando desconectar no banco
-@app.on_event("shutdown")
-async def shutdown():
-    await database.disconnect()
-
-
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 app = FastAPI()
 
+# Initial Route
 @app.get("/")
 async def rota_root():
     return {"Messagem": "Bem vindo a API da Bruestorm"}
 
 
 # /patients [GET] { .. }
-@app.get("/patients/", response_model=List[Patients])
-async def read_patients():
-    return session.query(PATIENTS).all()
-
-
-# /patients/UUID [GET] { .. }
-@app.get("/patients/{UUID}")
-async def read_uuid_patients(UUID):
-    return session.query(PATIENTS).filter_by(UUID=UUID).all()
+@app.get("/patients/", response_model=List[PatientsModel])
+def read_patients(db: Session = Depends(get_db)):
+    patients = get_patient(db)
+    return JSONResponse(content=patients)
 
 
 # /pharmacies [GET] { .. }
-@app.get("/pharmacies/", response_model=List[Pharmacies])
-async def read_pharmacies():
-    return session.query(PHARMACIES).all()
+@app.get("/pharmacies/", response_model=List[PharmaciesModel])
+def read_pharmacies(db: Session = Depends(get_db)):
+    pharmacies = get_pharmacies(db)
+    return JSONResponse(content=pharmacies)
 
 
-# /pharmacies/UUID [GET] { .. }
-@app.get("/pharmacies/{UUID}", response_model=List[Pharmacies])
-async def read_pharmacies(UUID):
-    return session.query(PHARMACIES).filter_by(UUID=UUID).all()
-
-
-# /transaction [GET] { .. }
-@app.get("/transactions/", response_model=List[Transactions])
-async def read_transaction():
-    return session.query(TRANSACTIONS).all()
+# /Transactions [GET] { .. }
+@app.get("/transactions/", response_model=List[TransactionsModel])
+def red_transaction_one(db: Session = Depends(get_db)):
+    transaction = get_transactions(db)
+    return JSONResponse(content=transaction)

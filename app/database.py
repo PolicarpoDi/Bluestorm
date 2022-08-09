@@ -1,23 +1,18 @@
-from databases import Database
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
-bd_bluestorm = "sqlite:////home/diegopolicarpo/Works/Projects/Pessoal/API_Bluestorm/app/backend_test.db"
-# SQLAlchemy specific code, as with any other
-DATABASE_URL = bd_bluestorm
-# DATABASE_URL = "postgresql://user:password@postgresserver/db"
+# Create a Database URL for SQLAlchemy
+DATABASE_URL = "sqlite:////home/diegopolicarpo/Works/Projects/Pessoal/API_Bluestorm/app/backend_test.db"
 
+# Create engine SQLAlchemy
 engine = create_engine(
     DATABASE_URL, connect_args={"check_same_thread": False}
 )
 
-Session = sessionmaker(bind=engine)
-session = Session()
+# Create a SessionLocal
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-database = Database(DATABASE_URL)
-
-
-
+# Create a Base class
 Base = declarative_base()
