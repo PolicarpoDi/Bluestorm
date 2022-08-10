@@ -11,7 +11,6 @@ def create_user(user: UserModel, db: Session):
     db.refresh(db_users)
     return db_users.to_dict()
     
-
 # Search all patients
 def get_users(db: Session):
     users = db.query(User).all()
@@ -20,16 +19,6 @@ def get_users(db: Session):
         dict.append(user.to_dict())
     return dict
 
-
-# Search all patients
-def get_patient(db: Session):
-    patients = db.query(Patients).all()
-    dict = []
-    for pacient in patients:
-        dict.append(pacient.to_dict())
-    return dict
-
-
 # Search all pharmacies 
 def get_pharmacies(db: Session):
     pharmacies = db.query(Pharmacies).all()
@@ -37,7 +26,6 @@ def get_pharmacies(db: Session):
     for pharmacy in pharmacies:
         dict.append(pharmacy.to_dict())
     return dict
-
 
 # Search all transactions
 def get_transactions(db: Session):

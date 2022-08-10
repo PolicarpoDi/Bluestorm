@@ -18,7 +18,6 @@ def get_db():
 
 router = APIRouter()
 
-
 # /user/create [POST] { .. }
 @router.post("/users/create", status_code=status.HTTP_201_CREATED, response_model=UserModel)
 def users_create(user: UserModel, db: Session = Depends(get_db)):
@@ -26,11 +25,8 @@ def users_create(user: UserModel, db: Session = Depends(get_db)):
     user_create = create_user(user, db)
     return JSONResponse(content=user_create)
 
-
 # /users/ [GET] { .. }
 @router.get("/users/", status_code=status.HTTP_200_OK, response_model=List[UserModel])
 def read_users(db: Session = Depends(get_db)):
     users = get_users(db)
-    if not users:
-        raise HTTPException(status_code=404, detail='User not found!')
     return JSONResponse(content=users)

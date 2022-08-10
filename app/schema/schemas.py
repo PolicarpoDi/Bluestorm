@@ -23,8 +23,6 @@ class Patients(Base):
     LAST_NAME = Column(String, index=True)
     DATE_OF_BIRTH = Column(Date, index=True)
 
-    
-
     def to_dict(self):
         return {"UUID": self.UUID,
                 "FIST_NAME": self.FIRST_NAME,

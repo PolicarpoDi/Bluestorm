@@ -18,20 +18,17 @@ def get_db():
 
 router = APIRouter()
     
-
 # /patients [GET] { .. }
 @router.get("/patients/", status_code=status.HTTP_200_OK, response_model=List[PatientsModel])
 def read_patients(db: Session = Depends(get_db)):
     patients = get_patient(db)
     return JSONResponse(content=patients)
 
-
 # /pharmacies [GET] { .. }
 @router.get("/pharmacies/", status_code=status.HTTP_200_OK, response_model=List[PharmaciesModel])
 def read_pharmacies(db: Session = Depends(get_db)):
     pharmacies = get_pharmacies(db)
     return JSONResponse(content=pharmacies)
-
 
 # /Transactions [GET] { .. }
 @router.get("/transactions/", status_code=status.HTTP_200_OK, response_model=List[TransactionsModel])
