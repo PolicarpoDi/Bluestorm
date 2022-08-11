@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from infra.sqlalchemy.repositorio.users import RepositorioUser
 from infra.sqlalchemy.config.database import get_bd
 from typing import List
+from infra.providers.hash_provider import generete_hash, verify_hash
 
 
 router = APIRouter()
@@ -13,6 +14,7 @@ router = APIRouter()
 
 @router.post('/create', status_code=status.HTTP_201_CREATED, response_model=UserSimpleModel)
 def create_user(user: UserModel, session: Session = Depends(get_bd)):
+    user.PASSWORD = generete_hash(user.PASSWORD)
     new_user = RepositorioUser(session).create_user(user)
     return new_user
 
@@ -30,3 +32,6 @@ def get_user_uuid(UUID: str, session: Session = Depends(get_bd)):
         raise HTTPException(
             status_code=404, detail=f'Não contem usuário cadastrado com o UUID {UUID}.')
     return get_uuid
+
+
+def login(login_data)
