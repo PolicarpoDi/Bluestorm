@@ -1,1 +1,0 @@
-# Método para verificar o Hash
