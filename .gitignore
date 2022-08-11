@@ -1,2 +1,8 @@
 # Ignore .idea
 .idea
+
+# Ignore Pycache
+__pycache__
+
+# Ignore venv
+venv_bluestorm
