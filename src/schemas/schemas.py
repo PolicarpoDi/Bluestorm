@@ -15,7 +15,7 @@ class UserSimpleModel(Base):
     USERNAME: str
 
 class LoginData(Base):
-    USERNAME: str
+    UUID: str
     PASSWORD: str
 
 class PatientsModel(Base):

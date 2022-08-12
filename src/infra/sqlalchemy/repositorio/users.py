@@ -24,7 +24,8 @@ class RepositorioUser():
         return users
 
 
-    def get_uuid(self, UUID: str):
+    def get_user_uuid(self, UUID: str) -> User:
         query = select(User).where(User.UUID == UUID)
         uuid_user = self.session.execute(query).scalars().first()
         return uuid_user
+
