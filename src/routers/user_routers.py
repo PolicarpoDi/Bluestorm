@@ -5,6 +5,9 @@ from infra.sqlalchemy.repositorio.users import RepositorioUser
 from infra.sqlalchemy.config.database import get_bd
 from typing import List
 from infra.providers.hash_provider import generete_hash, verify_hash
+from infra.providers.token_provider import create_acess_token
+from infra.sqlalchemy.models.models import User
+from routers.utils import get_logged_in_user
 
 
 router = APIRouter()
@@ -13,10 +16,8 @@ router = APIRouter()
 @router.post('/create', status_code=status.HTTP_201_CREATED, response_model=UserSimpleModel)
 def create_user(user: UserModel, session: Session = Depends(get_bd)):
     get_user = RepositorioUser(session).get_user_uuid(user.UUID)
-
     if get_user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Já existe um usuário para esse UUID')
-
 
     user.PASSWORD = generete_hash(user.PASSWORD)
     new_user = RepositorioUser(session).create_user(user)
@@ -29,27 +30,35 @@ def get_users(session: Session = Depends(get_bd)):
     return users
 
 
-@router.get('/{UUID}', status_code=status.HTTP_200_OK, response_model=UserSimpleModel)
+@router.get('/get/{UUID}', status_code=status.HTTP_200_OK, response_model=UserSimpleModel)
 def get_user_uuid(UUID: str, session: Session = Depends(get_bd)):
-    get_uuid = RepositorioUser(session).get_user_uuid(UUID)
-    if not get_uuid:
+    get_u_uuid = RepositorioUser(session).get_user_uuid(UUID)
+    if not get_u_uuid:
         raise HTTPException(
             status_code=404, detail=f'Não contem usuário cadastrado com o UUID {UUID}.')
-    return get_uuid
+    return get_u_uuid
 
 
 @router.post('/token')
 def login(login_data: LoginData, session: Session = Depends(get_bd)):
     uuid = login_data.UUID
     pwd = login_data.PASSWORD
-
+    
     get_uuid = RepositorioUser(session).get_user_uuid(uuid)
-
     if not get_uuid:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='UUID ou senha incorreto')
-
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail='UUID ou senha incorreto')
     pwd_valid = verify_hash(pwd, get_uuid.PASSWORD)
-    if not pwd_valid:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='UUID ou senha incorreto')
 
-    return get_uuid
+    if not pwd_valid:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail='UUID ou senha incorreto')
+
+    # Gerar Token JWT
+    token = create_acess_token({'sub': get_uuid.UUID})
+    return {'user': get_uuid, 'access_token': token}
+
+
+@router.get('/me', response_model=UserSimpleModel)
+def me(user: User = Depends(get_logged_in_user)):
+    return user
