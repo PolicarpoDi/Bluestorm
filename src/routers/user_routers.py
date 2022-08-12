@@ -1,13 +1,13 @@
-from fastapi import APIRouter, HTTPException, Depends, status
-from schemas.schemas import UserSimpleModel, UserModel, LoginData
-from sqlalchemy.orm import Session
-from infra.sqlalchemy.repositorio.users import RepositorioUser
-from infra.sqlalchemy.config.database import get_bd
-from typing import List
+from schemas.schemas import LoginSucces, UserSimpleModel, UserModel, LoginData
 from infra.providers.hash_provider import generete_hash, verify_hash
+from infra.sqlalchemy.repositorio.users import RepositorioUser
+from fastapi import APIRouter, HTTPException, Depends, status
 from infra.providers.token_provider import create_acess_token
+from infra.sqlalchemy.config.database import get_bd
 from infra.sqlalchemy.models.models import User
 from routers.utils import get_logged_in_user
+from sqlalchemy.orm import Session
+from typing import List
 
 
 router = APIRouter()
@@ -56,7 +56,7 @@ def login(login_data: LoginData, session: Session = Depends(get_bd)):
 
     # Gerar Token JWT
     token = create_acess_token({'sub': get_uuid.UUID})
-    return {'user': get_uuid, 'access_token': token}
+    return LoginSucces(USER=get_uuid, ACCESS_TOKEN=token)
 
 
 @router.get('/me', response_model=UserSimpleModel)

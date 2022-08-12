@@ -1,7 +1,8 @@
-from sqlalchemy.orm import Session
-from schemas.schemas import UserModel
 from infra.sqlalchemy.models.models import User
+from schemas.schemas import UserModel
+from sqlalchemy.orm import Session
 from sqlalchemy import select
+
 
 class RepositorioUser():
 

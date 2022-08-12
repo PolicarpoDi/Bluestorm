@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from pydantic import BaseModel
 
 class Base(BaseModel):
@@ -18,6 +18,10 @@ class LoginData(Base):
     UUID: str
     PASSWORD: str
 
+class LoginSucces(Base):
+    USER: UserSimpleModel
+    ACCESS_TOKEN: str
+
 class PatientsModel(Base):
     UUID: str
     FIRST_NAME: str
@@ -31,7 +35,5 @@ class PharmaciesModel(Base):
 
 class TransactionsModel(Base):
     UUID: str
-    PATIENT_UUID: str
-    PHARMACY_UUID: str
     AMOUNT: float
-    TIMESTAMP: date
+    TIMESTAMP: datetime

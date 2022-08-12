@@ -1,5 +1,6 @@
-from fastapi import FastAPI, status
 from routers import pharmacies_routers, user_routers
+from fastapi import FastAPI, status
+
 
 app = FastAPI()
 
