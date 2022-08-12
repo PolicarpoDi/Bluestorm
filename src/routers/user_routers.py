@@ -12,7 +12,6 @@ from typing import List
 
 router = APIRouter()
 
-
 @router.post('/create', status_code=status.HTTP_201_CREATED, response_model=UserSimpleModel)
 def create_user(user: UserModel, session: Session = Depends(get_bd)):
     get_user = RepositorioUser(session).get_user_uuid(user.UUID)
